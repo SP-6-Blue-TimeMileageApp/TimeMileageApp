@@ -1,29 +1,48 @@
-body { background-color:#FFC425;
-    background-image: url(background.jpg);
-    color: #000000;
-    font-family: Arial, helvetica;;
+body { 
+  background-color:#FFC425;
+  background-image: url(background.jpg);
+  color: #000000;
+  font-family: Arial, helvetica;;
 }
-#wrapper { width: 80%;
-         min-width: 700px;
-         max-width: 1024px;
-         margin-right: auto;
-         margin-left: auto;
-         background-color:#55aa55;
-         box-shadow: 3px 3px 3px #666666;
+
+#wrapper { 
+  width: 80%;
+  min-width: 700px;
+  max-width: 1024px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color:#55aa55;
+  box-shadow: 3px 3px 3px #666666;
 }
-header { background-color: #231F20;
-       color: #ffffff;
-     font-family: Arial, helvetica;;
+
+header { 
+  background-color: #231F20;
+  color: #ffffff;
+  font-family: Arial, helvetica;;
 }
-h1 { line-height: 200%;
-      text-align: center;
+
+h1 { 
+  line-height: 200%;    
+  text-align: center;
   background-repeat: no-repeat;
   background-position: right;
   padding-left: 20px;
   height: 72px;
   margin-bottom: 0;
-background-color:#231F20;
-color:#ffffff;
+  background-color:#231F20;
+  color:#ffffff;
+}
+
+h3 { 
+  line-height: 150%;    
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: right;
+  padding-left: 20px;
+  height: 50px;
+  margin-bottom: 0;
+  background-color:#231F20;
+  color:#ffffff;
 }
 
 nav { font-weight: bold;
@@ -40,10 +59,12 @@ nav ul { list-style-type: none;
      margin: 0;
      padding-left: 0;
 }
-h2 { color: #000000;
+h2 { 
+  color: #000000;
   font-family: Arial, helvetica;
 }
-dt { color: #000000;
+dt { 
+  color: #000000;
   font-weight: bold;
 }
 
@@ -59,7 +80,7 @@ figure {
 
 figcaption{
   position: absolute;
-  bottom: 15px;
+  bottom: -30px;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0,0,0,.2);
@@ -72,21 +93,23 @@ img{
 }
 
 
-footer { font-size: 0.70em;
-     text-align: center;
-     font-style: italic;
-     padding: 10px;
-     margin-left: 170px;
-     background-color: #FFFFFF;
+footer { 
+  font-size: 0.70em;
+  text-align: center;
+  font-style: italic;
+  padding: 10px;
+  margin-left: 170px;
+  background-color: #FFFFFF;
 }
 h3 { color: #000000;
 }
-main { padding-left: 20px;
-      padding-right: 20px;
-      background-color: #FFFFFF;
-      margin-left: 170px;
-      padding-top: 1px;
-      padding-bottom: 1px;
+main { 
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #FFFFFF;
+  margin-left: 170px;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 main img { 
   float: left;
