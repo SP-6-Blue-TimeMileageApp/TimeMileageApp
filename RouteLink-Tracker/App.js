@@ -6,6 +6,7 @@ export default function App() {
     <View style={styles.container}>
       <Text>
         Welcome to RouteLink Tracker{'\n'}
+        This is a test{'\n'}
         Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
