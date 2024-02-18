@@ -4,10 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>
-        Welcome to RouteLink Tracker{'\n'}
-        This is a test{'\n'}
-        Open up App.js to start working on your app!</Text>
+      <Text>Open up App.js to start working on your app! THIS IS NOT THE CORRECT PAGE</Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -16,7 +13,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#515151',
     alignItems: 'center',
     justifyContent: 'center',
   },
