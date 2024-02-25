@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function Page() {
@@ -9,8 +9,13 @@ export default function Page() {
         <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
 
         <View style={styles.loginContainer}>            
-            <Button onPress={() => router.navigate('loginPage')} title='Login'></Button>
-            <Button onPress={() => router.navigate('createAccountPage')} title='Create Account'></Button>
+            <TouchableOpacity onPress={() => router.navigate('loginPage')} style={styles.buttonContainer}>
+                    <Text style={styles.text}>Login</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.navigate('createAccountPage')} style={styles.buttonContainer}>
+                    <Text style={styles.text}>Create Account</Text>
+            </TouchableOpacity>
         </View>
         
     </View>
@@ -38,10 +43,19 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flex: 1,
     },
-
     imageContainer:{
         position: "relative",
     },
+
+    buttonContainer: {
+        backgroundColor: "#210000",
+        color: "#ffff",
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 20,
+        width: 200,
+        alignItems: "center"
+    }
 
 })
 

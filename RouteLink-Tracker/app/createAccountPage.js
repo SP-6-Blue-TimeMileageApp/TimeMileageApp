@@ -1,19 +1,63 @@
-import { Button, StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const createAccount = () => {
     const router = useRouter();
+    const [username, setUserEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isButtonDisabled, setButtonDisabled] = useState(true);
 
+    const createUser = () => {
+
+        Alert.alert(
+            'Email Sent', 
+            'Please check your email to confirm account creation.', 
+            [
+                {text: 'OK', onPress: () => router.back()}
+            ], 
+            {cancelable: false}
+        );
+        setUserEmail('')
+        setPassword('')
+    }
+
+    const setEmail = (text) => {
+        setUserEmail(text)
+        console.log("Your email is now " + text)
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (emailRegex.test(text)) {
+            setButtonDisabled(false);
+        } else {
+            setButtonDisabled(true);
+        }
+    }
+
+    const setPass = (text) => {
+        setPassword(text)
+        console.log("Your password is now " + text)
+    }
+    
+    
+    
     return(
         <View style={styles.container}>
             <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
 
             <View style={styles.loginContainer}>
 
-                <Text style={styles.text}>Username</Text>
-                <Text style={styles.text}>Password</Text>
+                {!username && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Email' onChangeText={setEmail} value={username}></TextInput>
+
+                {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password}></TextInput>
                 
-                <Button onPress={() => router.navigate('loginPage')} title='Create Account'></Button>
+                <TouchableOpacity onPress={createUser} style={styles.buttonContainer} disabled={isButtonDisabled}>
+                    <Text style={styles.text}>Create Account</Text>
+                </TouchableOpacity>
             </View>
             
         </View>  
@@ -44,7 +88,35 @@ const styles = StyleSheet.create({
 
     imageContainer:{
         position: "relative",
-    }
+    },
 
+    inputText: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+        width: 200,
+        backgroundColor: 'white'
+    },
+
+    buttonContainer: {
+        backgroundColor: "#210000",
+        color: "#ffff",
+        padding: 15,
+        borderRadius: 10,
+        width: 200,
+        alignItems: "center"
+    },
+
+    error: {
+        borderColor: 'red',
+    },
+    
+    required: {
+        color: 'red',
+        fontSize: 8,
+        alignSelf: 'flex-start',
+    }
 
 })
