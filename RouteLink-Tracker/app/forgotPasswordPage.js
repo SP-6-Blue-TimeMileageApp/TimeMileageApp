@@ -1,8 +1,39 @@
-import { Button, StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const forgotPassword = () => {
     const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [isButtonDisabled, setButtonDisabled] = useState(true);
+
+    const setPassword = (text) => {
+        setEmail(text)
+        console.log("Your email is now " + text)
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (emailRegex.test(text)) {
+            setButtonDisabled(false);
+        } else {
+            setButtonDisabled(true);
+        }
+
+    }
+
+    const changePassword = () => {
+        Alert.alert(
+            'Email Sent', 
+            'Please check your email for a recovery code', 
+            [
+                {text: 'OK', onPress: () => router.navigate('loginPage')}
+            ], 
+            {cancelable: false}
+        );
+        setEmail('')
+    }
 
     return(
         <View style={styles.container}>
@@ -10,10 +41,12 @@ const forgotPassword = () => {
 
             <View style={styles.loginContainer}>
 
-                
-                <Text style={styles.text}>Email</Text>
-                
-                <Button onPress={() => router.navigate('loginPage')} title='Send Recovery Code'></Button>
+                {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setPassword} value={email}></TextInput>
+
+                <TouchableOpacity onPress={changePassword} style={styles.buttonContainer} disabled={isButtonDisabled}>
+                    <Text style={styles.text}>Send Recovery Code</Text>
+                </TouchableOpacity>
             </View>
         
         </View>
@@ -44,7 +77,33 @@ const styles = StyleSheet.create({
 
     imageContainer:{
         position: "relative",
-    }
+    },
 
+    inputText: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+        width: 200,
+        backgroundColor: 'white'
+    },
+
+    buttonContainer: {
+        backgroundColor: "#210000",
+        color: "#ffff",
+        padding: 15,
+        borderRadius: 10,
+    },
+
+    error: {
+        borderColor: 'red',
+    },
+    
+    required: {
+        color: 'red',
+        fontSize: 8,
+        alignSelf: 'flex-start',
+    }
 
 })

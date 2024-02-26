@@ -1,4 +1,4 @@
-import { Stack, useRouter, Tabs } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 export default () => {
 
@@ -14,6 +14,7 @@ export default () => {
                 headerTitleStyle: {
                     fontWeight: 'bold',
                 },
+                headerBackTitle: 'Back',
             }}
         >
             
