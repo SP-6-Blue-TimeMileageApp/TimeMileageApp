@@ -23,6 +23,7 @@ export default () => {
             <Stack.Screen name="forgotPasswordPage" options={{ title: '' }} />
             <Stack.Screen name="createAccountPage" options={{ title: '' }} />
             
+            <Stack.Screen name="loadingPage" options={{headerShown: false}} />
             <Stack.Screen name="home" options={{headerShown: false}} />
         </Stack>
     );

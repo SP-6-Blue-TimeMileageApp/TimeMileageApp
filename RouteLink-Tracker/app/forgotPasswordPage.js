@@ -42,7 +42,7 @@ const forgotPassword = () => {
             <View style={styles.loginContainer}>
 
                 {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setPassword} value={email}></TextInput>
+                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setPassword} value={email} autoCorrect={false}></TextInput>
 
                 <TouchableOpacity onPress={changePassword} style={styles.buttonContainer} disabled={isButtonDisabled}>
                     <Text style={styles.text}>Send Recovery Code</Text>

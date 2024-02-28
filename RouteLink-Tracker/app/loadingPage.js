@@ -1,21 +1,33 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { useEffect } from 'react';
 
-export default function Page() {
+
+const loadingPage = () => {
     const router = useRouter();
+
+
+
+
+    useEffect(() => {
+        setTimeout(() => {
+
+            while(router.canGoBack()) {
+                router.back();
+            }
+            router.replace('/home');
+
+        }, 3000);
+    }, []);
+
 
     return (
     <View style={styles.container}>
-        <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
-
         <View style={styles.loginContainer}>            
-            <TouchableOpacity onPress={() => router.navigate('loginPage')} style={styles.buttonContainer}>
-                    <Text style={styles.text}>Login</Text>
-            </TouchableOpacity>
+            <FontAwesome5 name="smile" size={24} color="black" />
+            <Text style={styles.text}>Welcome!</Text>
 
-            <TouchableOpacity onPress={() => router.navigate('createAccountPage')} style={styles.buttonContainer}>
-                    <Text style={styles.text}>Create Account</Text>
-            </TouchableOpacity>
         </View>
         
     </View>
@@ -23,6 +35,8 @@ export default function Page() {
   
 }
 
+
+export default loadingPage;
 
 
 const styles = StyleSheet.create({

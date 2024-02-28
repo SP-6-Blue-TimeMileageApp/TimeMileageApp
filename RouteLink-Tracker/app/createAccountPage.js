@@ -50,10 +50,10 @@ const createAccount = () => {
             <View style={styles.loginContainer}>
 
                 {!username && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Email' onChangeText={setEmail} value={username}></TextInput>
+                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Email' onChangeText={setEmail} value={username} autoCorrect={false}></TextInput>
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password}></TextInput>
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
                 
                 <TouchableOpacity onPress={createUser} style={styles.buttonContainer} disabled={isButtonDisabled}>
                     <Text style={styles.text}>Create Account</Text>

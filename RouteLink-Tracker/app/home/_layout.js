@@ -2,8 +2,23 @@ import { Tabs } from "expo-router";
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Alert } from "react-native";
+import { useRouter } from 'expo-router';
+
+
 
 export default () => {
+
+    const router = useRouter();
+
+    const logout = () => {
+
+        while(router.canGoBack()) {
+            router.back();
+        }
+        router.replace('loginPage');
+    }
+
+
     return (
         <Tabs>
             <Tabs.Screen name="homePage" options={{ 
@@ -11,7 +26,17 @@ export default () => {
                 headerTitle: '', 
                 title: 'Home',
                 headerRight: () => (
-                    <Feather onPress={() => Alert.alert('Settings')} name="settings" size={24} color="black" />
+                    <Feather onPress={() => 
+                        Alert.alert(
+                            'Logout', 
+                            'Are you sure you want to logout?', 
+                            [
+                                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                {text: 'OK', onPress: (logout)}
+                            ], 
+                            {cancelable: false}
+                        )
+                    } name="log-out" size={24} color="black" />  
                 ),
                 tabBarIcon: () => (
                     <FontAwesome name="map-marker" size={24} color="black" />
@@ -23,7 +48,17 @@ export default () => {
                 tabBarActiveBackgroundColor: "#D9D9D9", 
                 title: 'History',
                 headerRight: () => (
-                    <Feather onPress={() => Alert.alert('Settings')} name="settings" size={24} color="black" />
+                    <Feather onPress={() => 
+                        Alert.alert(
+                            'Logout', 
+                            'Are you sure you want to logout?', 
+                            [
+                                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                {text: 'OK', onPress: (logout)}
+                            ], 
+                            {cancelable: false}
+                        )
+                    } name="log-out" size={24} color="black" />  
                 ),
                 tabBarIcon: () => (
                     <FontAwesome name="history" size={24} color="black" />
@@ -33,12 +68,22 @@ export default () => {
             
             <Tabs.Screen name="settingsPage" options={{ 
                 tabBarActiveBackgroundColor: "#D9D9D9", 
-                title: 'Settings',  
+                title: 'Account Details',  
                 headerRight: () => (
-                    <Feather onPress={() => Alert.alert('Settings')} name="settings" size={24} color="black" />
+                    <Feather onPress={() => 
+                        Alert.alert(
+                            'Logout', 
+                            'Are you sure you want to logout?', 
+                            [
+                                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                {text: 'OK', onPress: (logout)}
+                            ], 
+                            {cancelable: false}
+                        )
+                    } name="log-out" size={24} color="black" />  
                 ),
                 tabBarIcon: () => (
-                    <Feather name="settings" size={24} color="black" />
+                    <Feather name="user" size={24} color="black" />
                 )
             }} />
         </Tabs>

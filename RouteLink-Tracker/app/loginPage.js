@@ -20,7 +20,7 @@ const login = () => {
 
     const loginUser = () => {
         console.log("Logging in with " + username + " and " + password)
-        router.navigate('/home')
+        router.push({pathname: 'loadingPage', params: {username: username}});
     }
 
 
@@ -31,10 +31,10 @@ const login = () => {
 
             <View style={styles.loginContainer}>
                 {!username && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Username/Email' onChangeText={setEmail} value={username}></TextInput>
+                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Username/Email' onChangeText={setEmail} value={username} autoCorrect={false}></TextInput>
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password}></TextInput>
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
 
                 <TouchableOpacity onPress={loginUser} style={styles.buttonContainer} disabled={!username || !password}>
                     <Text style={styles.text}>Login</Text>
