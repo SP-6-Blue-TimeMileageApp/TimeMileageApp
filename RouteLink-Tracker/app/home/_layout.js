@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Alert } from "react-native";
 import { useRouter } from 'expo-router';
 
+import { firebaseLogout} from '../../firebaseConfig';
 
 
 export default () => {
@@ -15,7 +16,9 @@ export default () => {
         while(router.canGoBack()) {
             router.back();
         }
-        router.replace('loginPage');
+        router.replace('basePage');
+
+        firebaseLogout();
     }
 
 

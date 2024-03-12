@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { firebaseCreateAccount } from '../firebaseConfig';
+
+
 
 const createAccount = () => {
     const router = useRouter();
@@ -9,7 +12,12 @@ const createAccount = () => {
     const [password, setPassword] = useState('');
     const [isButtonDisabled, setButtonDisabled] = useState(true);
 
-    const createUser = () => {
+    const createUser = async () => {
+
+        console.log("Your email is now " + username)
+        console.log("Your password is now " + password)
+
+        await firebaseCreateAccount(username, password)
 
         Alert.alert(
             'Email Sent', 
@@ -19,14 +27,13 @@ const createAccount = () => {
             ], 
             {cancelable: false}
         );
-        setUserEmail('')
-        setPassword('')
+
+        setEmail('');
+        setPass('');
     }
 
     const setEmail = (text) => {
         setUserEmail(text)
-        console.log("Your email is now " + text)
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (emailRegex.test(text)) {
@@ -38,7 +45,6 @@ const createAccount = () => {
 
     const setPass = (text) => {
         setPassword(text)
-        console.log("Your password is now " + text)
     }
     
     
@@ -55,7 +61,7 @@ const createAccount = () => {
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
                 <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
                 
-                <TouchableOpacity onPress={createUser} style={styles.buttonContainer} disabled={isButtonDisabled}>
+                <TouchableOpacity onPress={createUser} style={styles.buttonContainer}>
                     <Text style={styles.text}>Create Account</Text>
                 </TouchableOpacity>
             </View>
