@@ -1,6 +1,7 @@
-import { Button, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { firebaseCurrentUser, firebaseGetDatabase } from '../../firebaseConfig';
+import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { firebaseGetDatabase } from '../../firebaseConfig';
 import React, { useEffect, useState } from 'react';
+import { Table, Row, Rows } from 'react-native-table-component'; 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import XLSX from 'xlsx';
@@ -37,28 +38,24 @@ const handleExport= async () => {
 
 
 const History = () => {
-
     const [trips, setTrips] = useState({});
 
     useEffect(() => {
         firebaseGetDatabase().then(data => setTrips(data)).catch(error => console.log(error));
     }, []);
 
+    const header = ['Trip ID', 'Distance', 'Trip'];
+    const data = Object.keys(trips).map(key => [key, trips[key].distance, trips[key].trip]);
+      
     return(
         <View style={styles.container}>
-            <View style={styles.tripContainer}>
-                <Text style={styles.headerText}>Trip ID</Text>
-                <Text style={styles.headerText}>Distance</Text>
-                <Text style={styles.headerText}>Trip</Text>
+            <View style={{flex: 1, padding: 20}}>
+                <Table borderStyle={{borderWidth: 2}}>
+                    <Row data={header} textStyle={{color: "white"}}  />
+                    <Rows data={data} textStyle={{color: "white"}} />
+                </Table>
             </View>
-
-            {Object.keys(trips).map((key) => (
-                <View key={key} style={styles.tripContainer}>
-                    <Text style={styles.tripText} numberOfLines={1} ellipsizeMode='tail'>{key}</Text>
-                    <Text style={styles.tripText} numberOfLines={1} ellipsizeMode='tail'>{trips[key].distance}</Text>
-                    <Text style={styles.tripText} numberOfLines={1} ellipsizeMode='tail'>{trips[key].trip}</Text>
-                </View>
-            ))}
+            
             <View style={{flex: 1, justifyContent: "flex-end"}}>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={handleExport} style={styles.button}><Text style={{textAlign: "center"}}>Export</Text></TouchableOpacity>
