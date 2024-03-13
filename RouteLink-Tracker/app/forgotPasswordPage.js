@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { firebaseForgotPassword } from '../firebaseConfig';
 
 
 const forgotPassword = () => {
@@ -11,8 +12,6 @@ const forgotPassword = () => {
 
     const setPassword = (text) => {
         setEmail(text)
-        console.log("Your email is now " + text)
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (emailRegex.test(text)) {
@@ -24,6 +23,11 @@ const forgotPassword = () => {
     }
 
     const changePassword = () => {
+
+        firebaseForgotPassword(email)
+
+        console.log("Your email is now " + email)
+
         Alert.alert(
             'Email Sent', 
             'Please check your email for a recovery code', 

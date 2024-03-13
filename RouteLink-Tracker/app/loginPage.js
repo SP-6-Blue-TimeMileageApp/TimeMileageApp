@@ -43,7 +43,7 @@ const login = () => {
                 <Text>Enter testing for password</Text>
 
                 {!username && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Username/Email' onChangeText={setEmail} value={username} autoCorrect={false}></TextInput>
+                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Email' onChangeText={setEmail} value={username} autoCorrect={false}></TextInput>
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
                 <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>

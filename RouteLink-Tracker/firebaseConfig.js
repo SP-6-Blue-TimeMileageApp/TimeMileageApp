@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getReactNativePersistence} from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail  } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 
 
@@ -33,14 +33,12 @@ export function firebaseGetDatabase() {
     const userEmailSanitized = userEmail.replace(/\./g, ',');
     const tripRef = ref(db, `trips/${userEmailSanitized}`);
 
-    // console.log(tripRef)
-    // console.log(userEmailSanitized)
-
     return new Promise((resolve, reject) => {
         onValue(tripRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 resolve(data);
+                console.log(data);
             } else {
                 reject("No data found");
             }
@@ -93,6 +91,15 @@ export function firebaseVerificationEmail(){
         console.log("Error sending email: " + error + "\n")
     });
 
+}
+
+export function firebaseForgotPassword(email){
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email).then(() => {
+        console.log("Email sent \n")
+    }).catch((error) => {
+        console.log("Error sending email: " + error + "\n")
+    });
 }
 
 export function firebaseSetDisplayName(username){

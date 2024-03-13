@@ -2,7 +2,6 @@ import { Button, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-n
 import { firebaseCurrentUser, firebaseGetDatabase } from '../../firebaseConfig';
 import React, { useEffect, useState } from 'react';
 
-
 const handleExport = () => {
     firebaseGetDatabase();
 }
@@ -31,7 +30,8 @@ const History = () => {
                     <Text style={styles.tripText} numberOfLines={1} ellipsizeMode='tail'>{trips[key].trip}</Text>
                 </View>
             ))}
-            <TouchableOpacity onPress={handleExport} style={styles.buttonContainer}><Text>Export</Text></TouchableOpacity>
+            <TouchableOpacity onPress={handleExport} style={styles.buttonContainer}><Text>Export to File</Text></TouchableOpacity>
+            <TouchableOpacity onPress={handleExport} style={styles.buttonContainer}><Text>Export to Email</Text></TouchableOpacity>
         </View>   
 
 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         position: 'absolute',
         bottom: 0,
-        width: '100%',
+        width: '50%',
         padding: 10,
         backgroundColor: '#D3D3D3',
         alignItems: 'center',
