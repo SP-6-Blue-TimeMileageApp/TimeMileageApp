@@ -1,10 +1,39 @@
 import { Button, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { firebaseCurrentUser, firebaseGetDatabase } from '../../firebaseConfig';
 import React, { useEffect, useState } from 'react';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import XLSX from 'xlsx';
 
-const handleExport = () => {
-    firebaseGetDatabase();
+
+const handleExport= async () => {
+    console.log('Exporting data to device');
+    const trips = await firebaseGetDatabase();
+
+    console.log(trips);
+
+    // Convert the data to the format that `XLSX.utils.aoa_to_sheet` expects
+    const data = Object.keys(trips).map(key => [key, trips[key].distance, trips[key].trip]);
+
+    console.log(data);
+
+    // Create a new workbook and worksheet
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.aoa_to_sheet([['Trip ID', 'Distance', 'Trip'], ...data]);
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Trips', true);
+
+    // Write the workbook to a file
+    const base64 = XLSX.write(wb, {type:'base64', bookType:"xlsx"});
+    const filename = FileSystem.documentDirectory + 'trips.xlsx';
+    await FileSystem.writeAsStringAsync(filename, base64, { encoding: FileSystem.EncodingType.Base64 })
+    .then(() => {
+        Sharing.shareAsync(filename)
+    });
+
 }
+
 
 
 const History = () => {
@@ -30,8 +59,12 @@ const History = () => {
                     <Text style={styles.tripText} numberOfLines={1} ellipsizeMode='tail'>{trips[key].trip}</Text>
                 </View>
             ))}
-            <TouchableOpacity onPress={handleExport} style={styles.buttonContainer}><Text>Export to File</Text></TouchableOpacity>
-            <TouchableOpacity onPress={handleExport} style={styles.buttonContainer}><Text>Export to Email</Text></TouchableOpacity>
+            <View style={{flex: 1, justifyContent: "flex-end"}}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={handleExport} style={styles.button}><Text style={{textAlign: "center"}}>Export</Text></TouchableOpacity>
+                </View>
+            </View>
+            
         </View>   
 
 
@@ -49,16 +82,6 @@ const styles = StyleSheet.create({
 
     text: {
         color: "#ffff"
-    },
-
-    loginContainer: {
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
-    },
-    imageContainer:{
-        position: "relative",
     },
 
     tripContainer: {
@@ -94,12 +117,19 @@ const styles = StyleSheet.create({
     },
 
     buttonContainer: {
-        position: 'absolute',
-        bottom: 0,
-        width: '50%',
-        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around', 
+        marginBottom: 10, 
+        padding: 10, 
+    },
+
+    button: {
+        borderRadius: 10,
         backgroundColor: '#D3D3D3',
-        alignItems: 'center',
+        padding: 10,
+        flex: 1,
+        justifyContent: 'center',
+        margin : 10,
     }
 
 })
