@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, Button } from 'react-native';
 import * as Location from 'expo-location';
+import { firebaseLogin, firebaseCurrentUser } from '../../firebaseConfig';
+
 
 export default function App() {
     const [mapRegion, setMapRegion] = useState({
@@ -18,6 +20,11 @@ export default function App() {
     const userLocation = async () => {
         try {
            
+
+          console.log("This is the home page")
+          firebaseCurrentUser()
+
+
             let {status} = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied')

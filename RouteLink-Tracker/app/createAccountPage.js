@@ -2,14 +2,29 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { firebaseCreateAccount, firebaseVerificationEmail, firebaseSetDisplayName, firebaseShowDisplayName } from '../firebaseConfig';
+
 
 const createAccount = () => {
     const router = useRouter();
-    const [username, setUserEmail] = useState('');
+    const [email, setUserEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isButtonDisabled, setButtonDisabled] = useState(true);
 
-    const createUser = () => {
+
+    //we can add this back in if we want email verification in order for new users to create an account
+    const handleNewAccount = () => {
+        router.back();
+        firebaseVerificationEmail();
+    }
+
+
+    const createUser = async () => {
+
+        console.log("Your email is now " + email)
+        console.log("Your password is now " + password)
+
+        await firebaseCreateAccount(email, password)
 
         Alert.alert(
             'Email Sent', 
@@ -19,14 +34,13 @@ const createAccount = () => {
             ], 
             {cancelable: false}
         );
-        setUserEmail('')
-        setPassword('')
+
+        setEmail('');
+        setPass('');
     }
 
     const setEmail = (text) => {
         setUserEmail(text)
-        console.log("Your email is now " + text)
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (emailRegex.test(text)) {
@@ -38,9 +52,8 @@ const createAccount = () => {
 
     const setPass = (text) => {
         setPassword(text)
-        console.log("Your password is now " + text)
     }
-    
+
     
     
     return(
@@ -48,14 +61,13 @@ const createAccount = () => {
             <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
 
             <View style={styles.loginContainer}>
-
-                {!username && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !username && styles.error]} placeholder='Email' onChangeText={setEmail} value={username}></TextInput>
+                {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setEmail} value={email} autoCorrect={false}></TextInput>
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password}></TextInput>
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
                 
-                <TouchableOpacity onPress={createUser} style={styles.buttonContainer} disabled={isButtonDisabled}>
+                <TouchableOpacity onPress={createUser} style={styles.buttonContainer}>
                     <Text style={styles.text}>Create Account</Text>
                 </TouchableOpacity>
             </View>
