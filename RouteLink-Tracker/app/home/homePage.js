@@ -50,7 +50,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
 
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=AIzaSyAR-7BkfmO7SNi_3L9qHAmRLklVOSgOKFQ` // Put API key here
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=` // Put API key here
       );
       const data = await response.json();
       console.log('API Response:', data);
@@ -137,7 +137,7 @@ export default function App() {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={mapRegion}
-        apiKey='AIzaSyAR-7BkfmO7SNi_3L9qHAmRLklVOSgOKFQ' // Put API key here
+        apiKey='' // Put API key here
       >
         {searchedLocation && (
           <Marker
