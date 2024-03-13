@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Image } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch,} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const Settings = () => {
