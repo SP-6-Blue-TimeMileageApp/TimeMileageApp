@@ -1,7 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getReactNativePersistence} from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import { getDatabase, ref, onValue } from "firebase/database";
+
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,6 +25,28 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const database = getDatabase();
+
+export function firebaseGetDatabase() {
+    const db = getDatabase();
+    const userEmail = auth.currentUser.email.split('@')[0];
+    const userEmailSanitized = userEmail.replace(/\./g, ',');
+    const tripRef = ref(db, `trips/${userEmailSanitized}`);
+
+    // console.log(tripRef)
+    // console.log(userEmailSanitized)
+
+    return new Promise((resolve, reject) => {
+        onValue(tripRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                resolve(data);
+            } else {
+                reject("No data found");
+            }
+        });
+    })
+}
 
 export function firebaseLogin(email, password) {
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
@@ -51,6 +75,7 @@ export function firebaseLogout() {
 }
 
 export function firebaseCreateAccount (email, password) {
+    const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
         const user = userCredential.user;
         console.log("User " + user.email + " has been created \n")
@@ -58,6 +83,34 @@ export function firebaseCreateAccount (email, password) {
         console.log("Error creating user: " + error + "\n")
     });
 
+}
+
+export function firebaseVerificationEmail(){
+    const auth = getAuth();
+    sendEmailVerification(auth.currentUser).then(() => {
+        console.log("Email sent \n")
+    }).catch((error) => {
+        console.log("Error sending email: " + error + "\n")
+    });
+
+}
+
+export function firebaseSetDisplayName(username){
+    const auth = getAuth();
+    const displayName = username;
+    updateProfile(auth.currentUser, {
+        displayName
+    }).then(() => {
+        console.log("Display name set \n")
+    }).catch((error) => {
+        console.log("Error setting display name: " + error + "\n")
+    });
+    
+}
+
+export function firebaseShowDisplayName(){
+    const auth = getAuth();
+    console.log(auth.currentUser.displayName)
 }
 
 

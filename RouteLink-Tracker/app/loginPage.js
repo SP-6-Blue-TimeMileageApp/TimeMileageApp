@@ -7,8 +7,6 @@ import { firebaseLogin, firebaseCurrentUser } from '../firebaseConfig';
 
 const login = () => {
     const router = useRouter();
-
-
     const [username, setUserEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -22,8 +20,8 @@ const login = () => {
     }
 
     const loginUser = () => {
-        console.log("Your email is now " + text)
-        console.log("Your password is now " + text)
+        console.log("Your email is now " + username)
+        console.log("Your password is now " + password)
 
         firebaseLogin(username, password)
         console.log("Logging in with " + username + " and " + password)

@@ -4,11 +4,9 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useEffect } from 'react';
 
 
+
 const loadingPage = () => {
     const router = useRouter();
-
-
-
 
     useEffect(() => {
         setTimeout(() => {
@@ -19,6 +17,7 @@ const loadingPage = () => {
             router.replace('/home');
 
         }, 3000);
+
     }, []);
 
 
@@ -27,7 +26,6 @@ const loadingPage = () => {
         <View style={styles.loginContainer}>            
             <FontAwesome5 name="smile" size={24} color="black" />
             <Text style={styles.text}>Welcome!</Text>
-
         </View>
         
     </View>
