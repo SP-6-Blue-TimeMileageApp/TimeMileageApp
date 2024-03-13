@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { firebaseForgotPassword } from '../firebaseConfig';
 
 
 const forgotPassword = () => {
@@ -11,8 +12,6 @@ const forgotPassword = () => {
 
     const setPassword = (text) => {
         setEmail(text)
-        console.log("Your email is now " + text)
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (emailRegex.test(text)) {
@@ -24,6 +23,11 @@ const forgotPassword = () => {
     }
 
     const changePassword = () => {
+
+        firebaseForgotPassword(email)
+
+        console.log("Your email is now " + email)
+
         Alert.alert(
             'Email Sent', 
             'Please check your email for a recovery code', 
@@ -42,7 +46,7 @@ const forgotPassword = () => {
             <View style={styles.loginContainer}>
 
                 {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
-                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setPassword} value={email}></TextInput>
+                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setPassword} value={email} autoCorrect={false}></TextInput>
 
                 <TouchableOpacity onPress={changePassword} style={styles.buttonContainer} disabled={isButtonDisabled}>
                     <Text style={styles.text}>Send Recovery Code</Text>
