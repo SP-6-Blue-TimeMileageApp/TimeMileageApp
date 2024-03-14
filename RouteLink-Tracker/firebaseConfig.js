@@ -38,13 +38,14 @@ export function firebaseGetDatabase() {
             const data = snapshot.val();
             if (data) {
                 resolve(data);
-                console.log(data);
+                // console.log(data);
             } else {
                 reject("No data found");
             }
         });
     })
-}
+};
+
 
 export function firebaseLogin(email, password) {
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
