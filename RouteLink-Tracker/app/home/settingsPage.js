@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch,} from 'react-native';
+import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Linking} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const Settings = () => {
+  const openBugReportForm = () => {
+    // // Google Form URL For Report Issue With Appl
+    const bugReportFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdd7TMZuFNZx97j-cAkYD1NbhaUp0iz2NrHLDUAJu3WhhcABQ/viewform?usp=pp_url'; 
+    Linking.openURL(bugReportFormUrl);
+  };
+
   const [form, setForm] = useState({
     darkMode: false,
   });
@@ -15,7 +21,7 @@ const Settings = () => {
             <Text style={styles.sectionTitle}>Preferences</Text>
 
             <TouchableOpacity
-              onPress={() => {
+               onPress={() => {
               }}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#515151' }]}>
@@ -79,8 +85,7 @@ const Settings = () => {
             <Text style={styles.sectionTitle}>Resources</Text>
 
             <TouchableOpacity
-              onPress={() => {
-              }}
+              onPress={openBugReportForm}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#8e8d91' }]}>
                 <FeatherIcon color="#fff" name="flag" size={20} />
