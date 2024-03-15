@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch,Linking } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Linking} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const Settings = () => {
   const openBugReportForm = () => {
-    // // Google Form URL For Report Issue With Application
+    // // Google Form URL For Report Issue With Appl
     const bugReportFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdd7TMZuFNZx97j-cAkYD1NbhaUp0iz2NrHLDUAJu3WhhcABQ/viewform?usp=pp_url'; 
     Linking.openURL(bugReportFormUrl);
   };
@@ -21,7 +21,8 @@ const Settings = () => {
             <Text style={styles.sectionTitle}>Preferences</Text>
 
             <TouchableOpacity
-               onPress={openBugReportForm}
+               onPress={() => {
+              }}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#515151' }]}>
                 <FeatherIcon 
@@ -58,7 +59,8 @@ const Settings = () => {
             </View>
 
             <TouchableOpacity
-              onPress={openBugReportForm}
+              onPress={() => {
+              }}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
                 <FeatherIcon //outline of the icon icon is globe,moon, credit card, and etc
@@ -83,7 +85,7 @@ const Settings = () => {
             <Text style={styles.sectionTitle}>Resources</Text>
 
             <TouchableOpacity
-              onPress={openBugReportForm} // Call the function to open the bug report form
+              onPress={openBugReportForm}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#8e8d91' }]}>
                 <FeatherIcon color="#fff" name="flag" size={20} />
@@ -93,7 +95,7 @@ const Settings = () => {
 
               <View style={styles.rowSpacer} />
 
-              <FeatherIcon
+              <FeatherIcon// color for the and size chevron to go to other tab >
                 color="#C6C6C6"
                 name="chevron-right"
                 size={20} />
