@@ -1,19 +1,75 @@
-import { Button, StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { firebaseCreateAccount, firebaseVerificationEmail, firebaseSetDisplayName, firebaseShowDisplayName } from '../firebaseConfig';
+
 
 const createAccount = () => {
     const router = useRouter();
+    const [email, setUserEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isButtonDisabled, setButtonDisabled] = useState(true);
 
+
+    //we can add this back in if we want email verification in order for new users to create an account
+    const handleNewAccount = () => {
+        router.back();
+        firebaseVerificationEmail();
+    }
+
+
+    const createUser = async () => {
+
+        console.log("Your email is now " + email)
+        console.log("Your password is now " + password)
+
+        await firebaseCreateAccount(email, password)
+
+        Alert.alert(
+            'Email Sent', 
+            'Please check your email to confirm account creation.', 
+            [
+                {text: 'OK', onPress: () => router.back()}
+            ], 
+            {cancelable: false}
+        );
+
+        setEmail('');
+        setPass('');
+    }
+
+    const setEmail = (text) => {
+        setUserEmail(text)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (emailRegex.test(text)) {
+            setButtonDisabled(false);
+        } else {
+            setButtonDisabled(true);
+        }
+    }
+
+    const setPass = (text) => {
+        setPassword(text)
+    }
+
+    
+    
     return(
         <View style={styles.container}>
             <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
 
             <View style={styles.loginContainer}>
+                {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setEmail} value={email} autoCorrect={false}></TextInput>
 
-                <Text style={styles.text}>Username</Text>
-                <Text style={styles.text}>Password</Text>
+                {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
                 
-                <Button onPress={() => router.navigate('loginPage')} title='Create Account'></Button>
+                <TouchableOpacity onPress={createUser} style={styles.buttonContainer}>
+                    <Text style={styles.text}>Create Account</Text>
+                </TouchableOpacity>
             </View>
             
         </View>  
@@ -44,7 +100,35 @@ const styles = StyleSheet.create({
 
     imageContainer:{
         position: "relative",
-    }
+    },
 
+    inputText: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+        width: 200,
+        backgroundColor: 'white'
+    },
+
+    buttonContainer: {
+        backgroundColor: "#210000",
+        color: "#ffff",
+        padding: 15,
+        borderRadius: 10,
+        width: 200,
+        alignItems: "center"
+    },
+
+    error: {
+        borderColor: 'red',
+    },
+    
+    required: {
+        color: 'red',
+        fontSize: 8,
+        alignSelf: 'flex-start',
+    }
 
 })

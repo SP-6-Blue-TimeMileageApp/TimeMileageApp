@@ -1,4 +1,4 @@
-import { Stack, useRouter, Tabs } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
 export default () => {
 
@@ -14,6 +14,7 @@ export default () => {
                 headerTitleStyle: {
                     fontWeight: 'bold',
                 },
+                headerBackTitle: 'Back',
             }}
         >
             
@@ -21,7 +22,9 @@ export default () => {
             <Stack.Screen name="loginPage" options={{ title: '' }} />
             <Stack.Screen name="forgotPasswordPage" options={{ title: '' }} />
             <Stack.Screen name="createAccountPage" options={{ title: '' }} />
+            <Stack.Screen name="basePage" options={{ title: '' }} />
             
+            <Stack.Screen name="loadingPage" options={{headerShown: false}} />
             <Stack.Screen name="home" options={{headerShown: false}} />
         </Stack>
     );
