@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getReactNativePersistence} from "firebase/app";
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from "firebase/auth";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail  } from "firebase/auth";
+import { signInWithEmailAndPassword, updateEmail, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail, updatePassword } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 
 
@@ -48,11 +49,14 @@ export function firebaseGetDatabase() {
 
 
 export function firebaseLogin(email, password) {
-    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    return signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
         const user = userCredential.user;
         console.log("User " + user.email + " has logged in \n")
+        return userCredential;
     }).catch((error) => {
         console.log("Error logging in: " + error + "\n")
+        throw error;
     });
 };
 
@@ -105,9 +109,8 @@ export function firebaseForgotPassword(email){
 
 export function firebaseSetDisplayName(username){
     const auth = getAuth();
-    const displayName = username;
     updateProfile(auth.currentUser, {
-        displayName
+        displayName: username
     }).then(() => {
         console.log("Display name set \n")
     }).catch((error) => {
@@ -116,11 +119,34 @@ export function firebaseSetDisplayName(username){
     
 }
 
-export function firebaseShowDisplayName(){
+//this currently does not work due to a setting turned on in firebase db for email verification, in theory this should work if we turn off email enumeration
+//under settings on authentication tab in firebase
+export function firebaseSetEmail(email){
     const auth = getAuth();
-    console.log(auth.currentUser.displayName)
+    updateEmail(auth.currentUser, email).then(() => {
+        console.log("Email set \n")
+    }).catch((error) => {
+        console.log("Error setting email: " + error + "\n")
+    });
 }
 
+export function firebaseGetDisplayName(){
+    const auth = getAuth();
+    return auth.currentUser.displayName;    
+}
 
+export function firebaseGetEmailName(){
+    const auth = getAuth();
+    return auth.currentUser.email;    
+}
+
+export function firebaseSetPassword(password){
+    const auth = getAuth();
+    updatePassword(auth.currentUser, password).then(() => {
+        console.log("Password set \n")
+    }).catch((error) => {
+        console.log("Error setting password: " + error + "\n")
+    });
+}
 
 
