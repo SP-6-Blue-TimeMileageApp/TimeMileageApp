@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useEffect } from 'react';
+import { firebaseGetDisplayName } from '../firebaseConfig';
 
 
 
@@ -25,7 +26,7 @@ const loadingPage = () => {
     <View style={styles.container}>
         <View style={styles.loginContainer}>            
             <FontAwesome5 name="smile" size={24} color="black" />
-            <Text style={styles.text}>Welcome!</Text>
+            <Text style={styles.text}>Welcome! {}</Text>
         </View>
         
     </View>

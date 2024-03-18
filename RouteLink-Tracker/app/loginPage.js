@@ -7,10 +7,12 @@ import { firebaseLogin, firebaseCurrentUser } from '../firebaseConfig';
 
 const login = () => {
     const router = useRouter();
-    const [username, setUserEmail] = useState('');
+    // const [username, setUserEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const username = "testing@gmail.com";
-    // const password = "testing";
+    const username = "testing@gmail.com"
+    // const password = "testing"
+
+    const [errorMessages, setErrorMessage] = useState('')
 
 
     const setEmail = (text) => {
@@ -26,11 +28,16 @@ const login = () => {
         console.log("Your password is now " + password)
 
         firebaseLogin(username, password)
-        console.log("Logging in with " + username + " and " + password)
-        router.push({pathname: 'loadingPage', params: {username: username}});
-
-        console.log("This is the login page")
-        firebaseCurrentUser()
+            .then((userCredential) => {
+            console.log("Logging in with " + username + " and " + password)
+            router.push({pathname: 'loadingPage', params: {username: username}});
+            console.log("This is the login page")
+            firebaseCurrentUser()
+        }).catch((error) => {
+            console.log("Error logging in with " + username + " and " + password)
+            console.log("Error: " + error)
+            setErrorMessage("Your email or password is incorrect")
+        })
 
     }
 
@@ -49,6 +56,8 @@ const login = () => {
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
                 <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
+
+                {errorMessages ? <Text style={{color: 'red'}}>{errorMessages}</Text> : null}
 
                 <TouchableOpacity onPress={loginUser} style={styles.buttonContainer}>
                     <Text style={styles.text}>Login</Text>
