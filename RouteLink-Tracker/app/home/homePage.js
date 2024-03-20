@@ -59,7 +59,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
       // Calls Places API to find the location
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w` // Put API key here
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=` // Put API key here
       );
       // Parses response as JSON and prints it in log
       const data = await response.json();
@@ -105,7 +105,7 @@ export default function App() {
     try {
       // Calls Directions API
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w`
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=`
 
       );
       // Parses response as JSON
@@ -162,7 +162,7 @@ export default function App() {
     try {
       // Calls Distance Matrix API to get time and distance, sets variable
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w`
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=`
 
       );
       const data = await response.json(); // Parses response as JSON
