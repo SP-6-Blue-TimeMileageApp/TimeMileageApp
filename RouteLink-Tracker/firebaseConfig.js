@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getReactNativePersistence, firebase } from "firebase/app";
+import { initializeApp, getReactNativePersistence } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail  } from "firebase/auth";
 import { getDatabase, ref, onValue, push, child, set } from "firebase/database";
@@ -28,7 +28,7 @@ const auth = getAuth(app);
 const database = getDatabase();
 
 export function firebaseGetDatabase() {
-    const db = firebase.database();
+    const db = getDatabase();
     const userEmail = auth.currentUser.email.split('@')[0];
     const userEmailSanitized = userEmail.replace(/\./g, ',');
     const tripRef = ref(db, `trips/${userEmailSanitized}`);
@@ -49,7 +49,6 @@ export function firebaseGetDatabase() {
 export function firebasePushTrip(startTime, endTime, startLocation, endLocation, distance) {
     const db = getDatabase();
     const userEmail = auth.currentUser.email.split('@')[0];
-    const userEmailSanitized = userEmail.replace(/\./g, ',');
 
     var newTripKey = push(child(ref(db), '/trips/' + userEmail)).key;
     console.log(newTripKey)
