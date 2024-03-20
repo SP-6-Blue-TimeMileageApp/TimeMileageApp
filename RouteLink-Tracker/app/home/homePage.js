@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform } from 'react-native';
 import * as Location from 'expo-location';
-import { firebaseLogin, firebaseCurrentUser } from '../../firebaseConfig';
+import { firebaseLogin, firebaseCurrentUser, firebasePushTrip } from '../../firebaseConfig';
 
 export default function App() {
   const [mapRegion, setMapRegion] = useState({
@@ -59,7 +59,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
       // Calls Places API to find the location
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w` // Put API key here
       );
       // Parses response as JSON and prints it in log
       const data = await response.json();
@@ -105,7 +105,8 @@ export default function App() {
     try {
       // Calls Directions API
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w`
+
       );
       // Parses response as JSON
       const data = await response.json();
@@ -161,7 +162,8 @@ export default function App() {
     try {
       // Calls Distance Matrix API to get time and distance, sets variable
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=AIzaSyDSjUSA10bnkkJBS-LGxoJjfxnxTW17R5w`
+
       );
       const data = await response.json(); // Parses response as JSON
       if (data.rows && data.rows.length > 0) {
@@ -205,6 +207,9 @@ export default function App() {
       const distance = calculateDistance(startCoordinates, endCoordinates);
       console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
       console.log('Distance traveled:', distance, 'miles');
+
+      trip = firebasePushTrip(startTime, endTime, startCoordinates, endCoordinates, distance);
+      console.log(trip)
       // Send time and distance variables to database here <---------------------------------------------------------------------------------------------
     } catch (error) {
       console.error('Error stopping trip:', error);
