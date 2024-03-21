@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Linking, Modal, TextInput} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {firebaseGetDisplayName, firebaseGetEmailName, firebaseSetDisplayName, firebaseSetEmail, firebaseSetPassword} from '../../firebaseConfig';
+import { router } from 'expo-router';
 
 const Settings = () => {
     const openBugReportForm = () => {
@@ -95,8 +96,7 @@ const Settings = () => {
                 </View>
 
                 <TouchableOpacity
-                onPress={() => {
-                }}
+                onPress={() => {router.navigate('./subscriptionPage')}}
                 style={styles.row}>
                 <View style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
                     <FeatherIcon //outline of the icon icon is globe,moon, credit card, and etc
