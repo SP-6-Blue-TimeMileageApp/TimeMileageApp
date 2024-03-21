@@ -89,6 +89,13 @@ export default () => {
                     <Feather name="user" size={24} color="black" />
                 )
             }} />
+
+            <Tabs.Screen name="subscriptionPage" options={{
+                headerShown: false
+            }}
+            >
+
+            </Tabs.Screen>
         </Tabs>
         
     );
