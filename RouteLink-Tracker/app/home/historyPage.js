@@ -1,10 +1,11 @@
 import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { firebaseGetDatabase } from '../../firebaseConfig';
+import { firebaseGetDatabase, firebaseGetPremiumStatus } from '../../firebaseConfig';
 import React, { useEffect, useState } from 'react';
 import { Table, Row, Rows } from 'react-native-table-component'; 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import XLSX from 'xlsx';
+import testImage from "../../assets/bannerAd.jpg";
 
 
 const handleExport= async () => {
@@ -38,10 +39,14 @@ const handleExport= async () => {
 
 
 const History = () => {
+
     const [trips, setTrips] = useState({});
+    const [premiumStatus, setPremiumStatus] = useState(false);
 
     useEffect(() => {
         firebaseGetDatabase().then(data => setTrips(data)).catch(error => console.log(error));
+        firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
+
     }, []);
 
     const header = ['Trip ID', 'Distance', 'Trip'];
@@ -49,6 +54,12 @@ const History = () => {
       
     return(
         <View style={styles.container}>
+            {!premiumStatus && (
+                <View style={styles.bannerAd}>
+                    <Image source={testImage} style={styles.adImage} />
+                </View>
+            )}
+
             <View style={{flex: 1, padding: 20}}>
                 <Table borderStyle={{borderWidth: 2}}>
                     <Row data={header} textStyle={{color: "white"}}  />
@@ -127,6 +138,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         margin : 10,
-    }
+    },
+    bannerAd: {
+        height: 50,
+        backgroundColor: 'lightblue',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    adImage: {
+        width: '100%',
+        height: '100%',
+    },
 
 })

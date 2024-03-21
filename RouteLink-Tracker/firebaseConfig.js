@@ -47,6 +47,23 @@ export function firebaseGetDatabase() {
     })
 };
 
+export function firebaseGetPremiumStatus() {
+    const db = getDatabase();
+    const userEmail = auth.currentUser.email.split('@')[0];
+    const userEmailSanitized = userEmail.replace(/\./g, ',');
+    const tripRef = ref(db, `account/${userEmailSanitized}/premium`);
+
+    return new Promise((resolve, reject) => {
+        onValue(tripRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                resolve(data);
+            } else {
+                reject("No data found");
+            }
+        });
+    })
+};
 
 export function firebaseLogin(email, password) {
     return signInWithEmailAndPassword(auth, email, password)
