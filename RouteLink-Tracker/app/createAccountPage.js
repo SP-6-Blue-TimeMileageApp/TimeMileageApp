@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { firebaseCreateAccount, firebaseVerificationEmail, firebaseSetDisplayName, firebaseShowDisplayName } from '../firebaseConfig';
+import { firebaseCreateAccount, firebaseVerificationEmail } from '../firebaseConfig';
 
 
 const createAccount = () => {
@@ -10,6 +10,8 @@ const createAccount = () => {
     const [email, setUserEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isButtonDisabled, setButtonDisabled] = useState(true);
+    const [errorMessages, setErrorMessage] = useState('')
+
 
 
     //we can add this back in if we want email verification in order for new users to create an account
@@ -24,19 +26,25 @@ const createAccount = () => {
         console.log("Your email is now " + email)
         console.log("Your password is now " + password)
 
-        await firebaseCreateAccount(email, password)
+        await firebaseCreateAccount(email, password).then((userCredential) => {
+            console.log("Creating account with " + email + " and " + password)
+            Alert.alert(
+                'Email Sent', 
+                'Please check your email to confirm account creation.', 
+                [
+                    {text: 'OK', onPress: () => router.back()}
+                ], 
+                {cancelable: false}
+            );
 
-        Alert.alert(
-            'Email Sent', 
-            'Please check your email to confirm account creation.', 
-            [
-                {text: 'OK', onPress: () => router.back()}
-            ], 
-            {cancelable: false}
-        );
+            setEmail('');
+            setPass('');
 
-        setEmail('');
-        setPass('');
+        }).catch((error) => {
+            console.log("Error creating account in with " + email + " and " + password)
+            console.log("Error: " + error)
+            setErrorMessage("The email is already in use. Please use a different email.")
+        })
     }
 
     const setEmail = (text) => {
@@ -61,6 +69,8 @@ const createAccount = () => {
             <Image source={require('../assets/mainLogo.png')} style={styles.imageContainer} />
 
             <View style={styles.loginContainer}>
+                {errorMessages ? <Text style={{color: 'red', textAlign: 'center'}}>{errorMessages}</Text> : null}
+
                 {!email && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
                 <TextInput style={[styles.inputText, !email && styles.error]} placeholder='Email' onChangeText={setEmail} value={email} autoCorrect={false}></TextInput>
 

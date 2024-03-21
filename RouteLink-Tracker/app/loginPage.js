@@ -8,9 +8,9 @@ import { firebaseLogin, firebaseCurrentUser } from '../firebaseConfig';
 const login = () => {
     const router = useRouter();
     // const [username, setUserEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // const [password, setPassword] = useState('');
     const username = "testing@gmail.com"
-    // const password = "testing"
+    const password = "testing"
 
     const [errorMessages, setErrorMessage] = useState('')
 
