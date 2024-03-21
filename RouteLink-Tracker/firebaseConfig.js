@@ -96,11 +96,14 @@ export function firebaseLogout() {
 
 export function firebaseCreateAccount (email, password) {
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    return createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
         const user = userCredential.user;
         console.log("User " + user.email + " has been created \n")
+        return userCredential;
     }).catch((error) => {
         console.log("Error creating user: " + error + "\n")
+        throw error;
     });
 
 }
