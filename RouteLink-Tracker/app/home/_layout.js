@@ -91,7 +91,7 @@ export default () => {
                 )
             }} />
 
-            <Tabs.Screen name="subscriptionPage" options={{
+            <Tabs.Screen name="subscriptionPay" options={{
                 headerShown: true,
                 title: '',
                 href: null,

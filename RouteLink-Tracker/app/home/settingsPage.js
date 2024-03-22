@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import { StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Linking, Modal, TextInput} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Image, StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Linking, Modal, TextInput, RefreshControl} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {firebaseGetDisplayName, firebaseGetEmailName, firebaseSetDisplayName, firebaseSetEmail, firebaseSetPassword} from '../../firebaseConfig';
+import {firebaseGetDisplayName, firebaseGetEmailName, firebaseSetDisplayName, firebaseGetPremiumStatus, firebaseSetEmail, firebaseSetPassword} from '../../firebaseConfig';
 import { router } from 'expo-router';
+import testImage from "../../assets/bannerAd.jpg";
 
 const Settings = () => {
+
+  const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      firebaseGetPremiumStatus().then(status => {
+        setPremiumStatus(status)
+        setRefreshing(false)
+      }).catch(error => {
+        console.log(error) 
+        setRefreshing(false)});
+    }, []);
+
     const openBugReportForm = () => {
       // // Google Form URL For Report Issue With Appl
       const bugReportFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdd7TMZuFNZx97j-cAkYD1NbhaUp0iz2NrHLDUAJu3WhhcABQ/viewform?usp=pp_url'; 
@@ -15,6 +29,13 @@ const Settings = () => {
       darkMode: false,
     });
 
+    useEffect(() => {
+      firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
+
+  }, []);
+
+
+    const [premiumStatus, setPremiumStatus] = useState();
     const [username, setUsername] = useState(firebaseGetDisplayName()) //this is the username
     const [password, setPassword] = useState('') //this is the password
     const [email, setEmail] = useState(firebaseGetEmailName()) //this is the email
@@ -52,6 +73,19 @@ const Settings = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+
+          <ScrollView>
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}>
+            
+            </RefreshControl>
+
+            {!premiumStatus && (
+                <View style={styles.bannerAd}>
+                    <Image source={testImage} style={styles.adImage} />
+                </View>
+        )}
+
+
         <View style={styles.container}>
             <ScrollView>
             <View style={styles.section}>
@@ -96,7 +130,7 @@ const Settings = () => {
                 </View>
 
                 <TouchableOpacity
-                onPress={() => {router.navigate('./subscriptionPage')}}
+                onPress={() => {router.navigate('./subscriptionPay')}}
                 style={styles.row}>
                 <View style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
                     <FeatherIcon //outline of the icon icon is globe,moon, credit card, and etc
@@ -189,6 +223,10 @@ const Settings = () => {
             </View>
             </ScrollView>
         </View>
+
+
+          </ScrollView>
+        
 
         <Modal
             animationType="slide"
@@ -360,5 +398,15 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
-  }
+  },
+  bannerAd: {
+    height: 50,
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adImage: {
+      width: '100%',
+      height: '100%',
+  },
 });

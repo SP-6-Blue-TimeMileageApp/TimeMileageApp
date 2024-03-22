@@ -3,7 +3,7 @@ import { initializeApp, getReactNativePersistence} from "firebase/app";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from "firebase/auth";
 import { signInWithEmailAndPassword, updateEmail, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail, updatePassword } from "firebase/auth";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set } from "firebase/database";
 
 
 
@@ -47,6 +47,36 @@ export function firebaseGetDatabase() {
     })
 };
 
+export function firebaseGetPremiumStatus() {
+    const db = getDatabase();
+    const userEmail = auth.currentUser.email.split('@')[0];
+    const userEmailSanitized = userEmail.replace(/\./g, ',');
+    const tripRef = ref(db, `account/${userEmailSanitized}/premium`);
+
+    return new Promise((resolve, reject) => {
+        onValue(tripRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data !== null) {
+                resolve(data);
+            } else {
+                reject("No data found");
+            }
+        });
+    })
+};
+
+export function firebaseSetPremiumStatus(status) {
+    const db = getDatabase();
+    const userEmail = auth.currentUser.email.split('@')[0];
+    const userEmailSanitized = userEmail.replace(/\./g, ',');
+
+    set(ref(db, `account/${userEmailSanitized}/premium`), status).then(() => {
+        console.log("Premium status set to " + status);
+    }).catch((error) => {
+        console.log("Error setting premium status: " + error + "\n")
+    })
+
+}
 
 export function firebaseLogin(email, password) {
     return signInWithEmailAndPassword(auth, email, password)

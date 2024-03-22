@@ -1,10 +1,12 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { firebaseGetDatabase } from '../../firebaseConfig';
-import React, { useEffect, useState } from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity, RefreshControl, ScrollView, SafeAreaView } from 'react-native';
+import { firebaseGetDatabase, firebaseGetPremiumStatus } from '../../firebaseConfig';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Row, Rows } from 'react-native-table-component'; 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import XLSX from 'xlsx';
+import testImage from "../../assets/bannerAd.jpg";
+
 
 
 const handleExport= async () => {
@@ -35,24 +37,55 @@ const handleExport= async () => {
 
 }
 
-
-
 const History = () => {
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      firebaseGetPremiumStatus().then(status => {
+        setPremiumStatus(status)
+        setRefreshing(false)
+      }).catch(error => {
+        console.log(error) 
+        setRefreshing(false)});
+    }, []);
+
+
+
     const [trips, setTrips] = useState({});
+    const [premiumStatus, setPremiumStatus] = useState(null);
 
     useEffect(() => {
         firebaseGetDatabase().then(data => setTrips(data)).catch(error => console.log(error));
+        firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
+        console.log(premiumStatus);
+
     }, []);
 
-    const header = ['Trip ID', 'Distance', 'Trip'];
+    const header = ['Start Date', 'Distance', 'End Location'];
     const data = Object.keys(trips).map(key => [key, trips[key].distance, trips[key].trip]);
       
     return(
-        <View style={styles.container}>
+
+
+        <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+            <ScrollView>
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}>
+            
+            </RefreshControl>
+
+            <View style={styles.container}>
+            {!premiumStatus && (
+                <View style={styles.bannerAd}>
+                    <Image source={testImage} style={styles.adImage} />
+                </View>
+            )}
+
             <View style={{flex: 1, padding: 20}}>
                 <Table borderStyle={{borderWidth: 2}}>
-                    <Row data={header} textStyle={{color: "white"}}  />
-                    <Rows data={data} textStyle={{color: "white"}} />
+                    <Row data={header} textStyle={{color: "black"}}  />
+                    <Rows data={data} textStyle={{color: "black"}} />
                 </Table>
             </View>
             
@@ -62,7 +95,11 @@ const History = () => {
                 </View>
             </View>
             
-        </View>   
+            </View> 
+              
+        </ScrollView>
+        </SafeAreaView>
+        
 
 
     )
@@ -74,7 +111,6 @@ export default History;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#515151',
     },
 
     text: {
@@ -127,6 +163,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         margin : 10,
-    }
+    },
+    bannerAd: {
+        height: 50,
+        backgroundColor: 'lightblue',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    adImage: {
+        width: '100%',
+        height: '100%',
+    },
 
 })
