@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
-import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform , Image} from 'react-native';
 import * as Location from 'expo-location';
-import { firebaseLogin, firebaseCurrentUser } from '../../firebaseConfig';
+import { firebaseLogin, firebaseCurrentUser, firebaseGetPremiumStatus } from '../../firebaseConfig';
+import testImage from "../../assets/bannerAd.jpg";
 
 export default function App() {
+
   const [mapRegion, setMapRegion] = useState({
     latitude: 33.93874201464112,
     longitude: -84.51974379133362,
@@ -25,6 +27,7 @@ export default function App() {
   const [startTime, setStartTime] = useState(null);
   const [startCoordinates, setStartCoordinates] = useState(null);
   const [endCoordinates, setEndCoordinates] = useState(null);
+  const [premiumStatus, setPremiumStatus] = useState(firebaseGetPremiumStatus());
 
   // Gets user's current location information
   const getUserLocation = async () => {
@@ -233,6 +236,7 @@ export default function App() {
 
   useEffect(() => {
     getUserLocation();
+    firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
   }, []);
 
   useEffect(() => {
@@ -247,6 +251,12 @@ export default function App() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 45 : 0}
     >
+
+        {/* {!premiumStatus && (
+                <View style={styles.bannerAd}>
+                    <Image source={testImage} style={styles.adImage} />
+                </View>
+        )} */}
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -313,5 +323,15 @@ const styles = StyleSheet.create({
   },
   distanceInfo: {
     marginTop: 10,
+  },
+  bannerAd: {
+    height: 50,
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adImage: {
+      width: '100%',
+      height: '100%',
   },
 });
