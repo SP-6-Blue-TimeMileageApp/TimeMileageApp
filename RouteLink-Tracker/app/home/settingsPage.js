@@ -9,6 +9,12 @@ const Settings = () => {
     Linking.openURL(bugReportFormUrl);
   };
 
+  const openContactUsForm = () => {
+    // // Google Form URL For Report Issue With Appl
+    const ContactUsFormUrl = 'https://forms.gle/cnjNCdwoyPY53Fj66'; 
+    Linking.openURL(ContactUsFormUrl);
+  };
+
   const [form, setForm] = useState({
     darkMode: false,
   });
@@ -102,8 +108,7 @@ const Settings = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {
-              }}
+              onPress={openContactUsForm}
               style={styles.row}>
               <View style={[styles.rowIcon, { backgroundColor: '#007afe' }]}>
                 <FeatherIcon 
