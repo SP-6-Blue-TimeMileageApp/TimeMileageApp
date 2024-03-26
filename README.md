@@ -10,3 +10,6 @@ The second tier will be a paid version of the app that will contain no ads acros
 
 Both tiers will contain features that will allow the user to track the location between two points, download a excel file for tax purposes around tax season, see information about previous trips, change basic information about account (contact email, password, etc...). 
 
+Here is the website where you can look over any documentation that was created for this project
+https://sp-6-blue-timemileageapp.github.io/TimeMileageApp/
+
