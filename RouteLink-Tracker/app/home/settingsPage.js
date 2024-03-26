@@ -7,6 +7,15 @@ import testImage from "../../assets/bannerAd.jpg";
 
 const Settings = () => {
 
+  const openContactUsForm = () => {
+    // // Google Form URL For Report Issue With Appl
+    const ContactUsFormUrl = 'https://forms.gle/cnjNCdwoyPY53Fj66'; 
+    Linking.openURL(ContactUsFormUrl);
+  };
+
+  const [form, setForm] = useState({
+    darkMode: false,
+  });
   const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
@@ -24,10 +33,6 @@ const Settings = () => {
       const bugReportFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdd7TMZuFNZx97j-cAkYD1NbhaUp0iz2NrHLDUAJu3WhhcABQ/viewform?usp=pp_url'; 
       Linking.openURL(bugReportFormUrl);
     };
-
-    const [form, setForm] = useState({
-      darkMode: false,
-    });
 
     useEffect(() => {
       firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
@@ -172,8 +177,7 @@ const Settings = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => {
-                  }}
+                  onPress={openContactUsForm}
                   style={styles.row}>
                   <View style={[styles.rowIcon, { backgroundColor: '#007afe' }]}>
                       <FeatherIcon 
@@ -194,7 +198,6 @@ const Settings = () => {
 
                 </TouchableOpacity>
             </View>
-
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Account Info</Text>
