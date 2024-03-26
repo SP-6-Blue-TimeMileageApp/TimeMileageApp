@@ -14,6 +14,7 @@ export default function App() {
     longitudeDelta: 0.0421,
   });
   const mapJson = []; // Unused. Can be used to change Map theme
+  const APIKey = '' // Put API key here
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,7 +63,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
       // Calls Places API to find the location
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${APIKey}`
       );
       // Parses response as JSON and prints it in log
       const data = await response.json();
@@ -108,7 +109,7 @@ export default function App() {
     try {
       // Calls Directions API
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=${APIKey}`
       );
       // Parses response as JSON
       const data = await response.json();
@@ -164,7 +165,7 @@ export default function App() {
     try {
       // Calls Distance Matrix API to get time and distance, sets variable
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=${APIKey}`
       );
       const data = await response.json(); // Parses response as JSON
       if (data.rows && data.rows.length > 0) {
@@ -201,14 +202,6 @@ export default function App() {
         longitude: location.coords.longitude,
       });
       setShowStopButton(false);
-      const endTime = Date.now();
-      const timeTakenSeconds = (endTime - startTime) / 1000;
-      const minutes = Math.floor(timeTakenSeconds / 60);
-      const seconds = Math.floor(timeTakenSeconds % 60);
-      const distance = calculateDistance(startCoordinates, endCoordinates);
-      console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
-      console.log('Distance traveled:', distance, 'miles');
-      // Send time and distance variables to database here <---------------------------------------------------------------------------------------------
     } catch (error) {
       console.error('Error stopping trip:', error);
     }
@@ -244,6 +237,20 @@ export default function App() {
       getDistanceInfo();
     }
   }, [userLocation, searchedLocation]);
+
+  // useEffect to calculate distance after endCoordinates update
+  useEffect(() => {
+    if (endCoordinates) {
+      const endTime = Date.now();
+      const timeTakenSeconds = (endTime - startTime) / 1000;
+      const minutes = Math.floor(timeTakenSeconds / 60);
+      const seconds = Math.floor(timeTakenSeconds % 60);
+      const distance = calculateDistance(startCoordinates, endCoordinates);
+      console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
+      console.log('Distance traveled:', distance, 'miles');
+      // Send time and distance variables to database here <---------------------------------------------------------------------------------------------
+    }
+  }, [endCoordinates]);
 
   return (
     <KeyboardAvoidingView
