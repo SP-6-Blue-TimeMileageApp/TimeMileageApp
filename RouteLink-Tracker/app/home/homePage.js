@@ -12,6 +12,7 @@ export default function App() {
     longitudeDelta: 0.0421,
   });
   const mapJson = []; // Unused. Can be used to change Map theme
+  const apiKey = //Enter API Key Here
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,7 +60,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
       // Calls Places API to find the location
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=` // Put API key here
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${apiKey}`
       );
       // Parses response as JSON and prints it in log
       const data = await response.json();
@@ -105,7 +106,7 @@ export default function App() {
     try {
       // Calls Directions API
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` //put API key here
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLocation.latitude},${userLocation.longitude}&destination=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=${apiKey}` //put API key here
 
       );
       // Parses response as JSON
@@ -162,7 +163,7 @@ export default function App() {
     try {
       // Calls Distance Matrix API to get time and distance, sets variable
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=` //put API key here
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userLocation.latitude},${userLocation.longitude}&destinations=${searchedLocation.coordinate.latitude},${searchedLocation.coordinate.longitude}&key=${apiKey}` //put API key here
 
       );
       const data = await response.json(); // Parses response as JSON
@@ -208,13 +209,39 @@ export default function App() {
       console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
       console.log('Distance traveled:', distance, 'miles');
 
-      trip = firebasePushTrip(startTime, endTime, startCoordinates, endCoordinates, distance);
-      console.log(trip)
+      const startDate = (new Date(startTime)).toUTCString();
+      const endDate = (new Date(endTime)).toUTCString();
+
+      const startAddress = await getAddressFromCoordinates(startCoordinates.latitude, startCoordinates.longitude)
+      const endAddress = await getAddressFromCoordinates(endCoordinates.latitude, endCoordinates.longitude)
+
+      trip = firebasePushTrip(startDate, endDate, startAddress, endAddress, distance);
       // Send time and distance variables to database here <---------------------------------------------------------------------------------------------
     } catch (error) {
       console.error('Error stopping trip:', error);
     }
   };
+
+  //Fetches address given input coordinates using google geocoding api
+  const getAddressFromCoordinates = async(lat, long) => {
+    try{
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}`
+      );
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        out = data.results[0].formatted_address;
+      } else {
+        out = "Failed to retrieve address";
+      }
+      return out;
+
+    } catch (error) {
+      console.log("Error fetching address: ", error)
+    }
+  }
+
   // Calculates the straight line distance traveled from starting location to ending location in miles. Would be better to find a way to calculate true distance traveled.
   const calculateDistance = (start, end) => {
     const earthRadiusMeters = 6371e3;

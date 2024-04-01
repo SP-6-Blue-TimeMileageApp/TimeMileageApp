@@ -49,17 +49,15 @@ export function firebaseGetDatabase() {
 export function firebasePushTrip(startTime, endTime, startLocation, endLocation, distance) {
     const db = getDatabase();
     const userEmail = auth.currentUser.email.split('@')[0];
-
     var newTripKey = push(child(ref(db), '/trips/' + userEmail)).key;
-    console.log(newTripKey)
-    set(ref(db, '/trips/' + userEmail + '/' + newTripKey) , {
+
+    set(ref(db, '/trips/'+userEmail+'/'+newTripKey) , {
         startTime: startTime,
         endTime: endTime,
         startLocation: startLocation,
         endLocation: endLocation,
         distance: distance
     })
-    return;
 }
 
 export function firebaseLogin(email, password) {
