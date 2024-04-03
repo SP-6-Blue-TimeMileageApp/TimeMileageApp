@@ -14,7 +14,7 @@ export default function App() {
     longitudeDelta: 0.0421,
   });
   const mapJson = []; // Unused. Can be used to change Map theme
-  const APIKey = 'AIzaSyAx_p9itAZTM_mE3NkG9UoBc9GJ6VFZP6Y' // Put API key here
+  const APIKey = '' // Put API key here
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
