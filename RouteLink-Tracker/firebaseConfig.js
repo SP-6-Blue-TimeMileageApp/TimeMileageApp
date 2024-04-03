@@ -3,7 +3,7 @@ import { initializeApp, getReactNativePersistence} from "firebase/app";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from "firebase/auth";
 import { signInWithEmailAndPassword, updateEmail, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, sendPasswordResetEmail, updatePassword } from "firebase/auth";
-import { getDatabase, ref, onValue, set } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, child } from "firebase/database";
 
 
 
@@ -47,6 +47,20 @@ export function firebaseGetDatabase() {
     })
 };
 
+export function firebasePushTrip(startTime, endTime, startLocation, endLocation, distance) {
+    const db = getDatabase();
+    const userEmail = auth.currentUser.email.split('@')[0];
+    var newTripKey = push(child(ref(db), '/trips/' + userEmail)).key;
+
+    set(ref(db, '/trips/'+userEmail+'/'+newTripKey) , {
+        startTime: startTime,
+        endTime: endTime,
+        startLocation: startLocation,
+        endLocation: endLocation,
+        distance: distance
+    })
+}
+
 export function firebaseGetPremiumStatus() {
     const db = getDatabase();
     const userEmail = auth.currentUser.email.split('@')[0];
@@ -63,7 +77,7 @@ export function firebaseGetPremiumStatus() {
             }
         });
     })
-};
+}
 
 export function firebaseSetPremiumStatus(status) {
     const db = getDatabase();
@@ -88,7 +102,7 @@ export function firebaseLogin(email, password) {
         console.log("Error logging in: " + error + "\n")
         throw error;
     });
-};
+}
 
 export function firebaseCurrentUser() {
     const user = auth.currentUser;
@@ -181,5 +195,4 @@ export function firebaseSetPassword(password){
         console.log("Error setting password: " + error + "\n")
     });
 }
-
 

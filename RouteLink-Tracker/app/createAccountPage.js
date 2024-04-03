@@ -9,6 +9,7 @@ const createAccount = () => {
     const router = useRouter();
     const [email, setUserEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [isButtonDisabled, setButtonDisabled] = useState(true);
     const [errorMessages, setErrorMessage] = useState('')
 
@@ -26,25 +27,34 @@ const createAccount = () => {
         console.log("Your email is now " + email)
         console.log("Your password is now " + password)
 
-        await firebaseCreateAccount(email, password).then((userCredential) => {
-            console.log("Creating account with " + email + " and " + password)
-            Alert.alert(
-                'Email Sent', 
-                'Please check your email to confirm account creation.', 
-                [
-                    {text: 'OK', onPress: () => router.back()}
-                ], 
-                {cancelable: false}
-            );
+        if(password.length < 6 || confirmPassword.length < 6) {
+            setErrorMessage("Password must be at least 6 characters long")
+            return;
+        }
 
-            setEmail('');
-            setPass('');
-
-        }).catch((error) => {
-            console.log("Error creating account in with " + email + " and " + password)
-            console.log("Error: " + error)
-            setErrorMessage("The email is already in use. Please use a different email.")
-        })
+        if (password == confirmPassword) {
+            await firebaseCreateAccount(email, password).then((userCredential) => {
+                console.log("Creating account with " + email + " and " + password)
+                Alert.alert(
+                    'Email Sent', 
+                    'Please check your email to confirm account creation.', 
+                    [
+                        {text: 'OK', onPress: () => router.back()}
+                    ], 
+                    {cancelable: false}
+                );
+    
+                setEmail('');
+                setPass('');
+    
+            }).catch((error) => {
+                console.log("Error creating account in with " + email + " and " + password)
+                console.log("Error: " + error)
+                setErrorMessage("The email is already in use. Please use a different email.")
+            })
+        }else {
+            setErrorMessage("Passwords do not match")
+        }
     }
 
     const setEmail = (text) => {
@@ -62,6 +72,10 @@ const createAccount = () => {
         setPassword(text)
     }
 
+    const setConfirmPass = (text) => {
+        setConfirmPassword(text)
+    }
+
     
     
     return(
@@ -76,6 +90,9 @@ const createAccount = () => {
 
                 {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
                 <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Password' onChangeText={setPass} value={password} autoCorrect={false}></TextInput>
+
+                {!password && <Text style={styles.required}><Icon name='star' size={10} color={'red'}>Required</Icon></Text>}
+                <TextInput style={[styles.inputText, !password && styles.error]} placeholder='Confirm Password' onChangeText={setConfirmPass} value={confirmPassword} autoCorrect={false}></TextInput>
                 
                 <TouchableOpacity onPress={createUser} style={styles.buttonContainer}>
                     <Text style={styles.text}>Create Account</Text>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform , Image} from 'react-native';
 import * as Location from 'expo-location';
-import { firebaseLogin, firebaseCurrentUser, firebaseGetPremiumStatus } from '../../firebaseConfig';
+import { firebaseLogin, firebaseCurrentUser, firebaseGetPremiumStatus, firebasePushTrip } from '../../firebaseConfig';
 import testImage from "../../assets/bannerAd.jpg";
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
     longitudeDelta: 0.0421,
   });
   const mapJson = []; // Unused. Can be used to change Map theme
-  const APIKey = '' // Put API key here
+  const APIKey = 'AIzaSyAx_p9itAZTM_mE3NkG9UoBc9GJ6VFZP6Y' // Put API key here
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,6 +206,27 @@ export default function App() {
       console.error('Error stopping trip:', error);
     }
   };
+
+  //Fetches address given input coordinates using google geocoding api
+  const getAddressFromCoordinates = async(lat, long) => {
+    try{
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${APIKey}`
+      );
+      const data = await response.json();
+
+      if (data.results.length > 0) {
+        out = data.results[0].formatted_address;
+      } else {
+        out = "Failed to retrieve address";
+      }
+      return out;
+
+    } catch (error) {
+      console.log("Error fetching address: ", error)
+    }
+  }
+
   // Calculates the straight line distance traveled from starting location to ending location in miles. Would be better to find a way to calculate true distance traveled.
   const calculateDistance = (start, end) => {
     const earthRadiusMeters = 6371e3;
@@ -240,16 +261,27 @@ export default function App() {
 
   // useEffect to calculate distance after endCoordinates update
   useEffect(() => {
-    if (endCoordinates) {
-      const endTime = Date.now();
-      const timeTakenSeconds = (endTime - startTime) / 1000;
-      const minutes = Math.floor(timeTakenSeconds / 60);
-      const seconds = Math.floor(timeTakenSeconds % 60);
-      const distance = calculateDistance(startCoordinates, endCoordinates);
-      console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
-      console.log('Distance traveled:', distance, 'miles');
-      // Send time and distance variables to database here <---------------------------------------------------------------------------------------------
-    }
+    const calculateTrip = async () => {
+      if (endCoordinates) {
+        const endTime = Date.now();
+        const timeTakenSeconds = (endTime - startTime) / 1000;
+        const minutes = Math.floor(timeTakenSeconds / 60);
+        const seconds = Math.floor(timeTakenSeconds % 60);
+        const distance = calculateDistance(startCoordinates, endCoordinates);
+        console.log('Time taken:', `${minutes} minutes and ${seconds} seconds`);
+        console.log('Distance traveled:', distance, 'miles');
+  
+        const startDate = (new Date(startTime)).toUTCString();
+        const endDate = (new Date(endTime)).toUTCString();
+  
+        const startAddress = await getAddressFromCoordinates(startCoordinates.latitude, startCoordinates.longitude)
+        const endAddress = await getAddressFromCoordinates(endCoordinates.latitude, endCoordinates.longitude)
+  
+        trip = firebasePushTrip(startDate, endDate, startAddress, endAddress, distance);
+      }
+    };
+  
+    calculateTrip();
   }, [endCoordinates]);
 
   return (
