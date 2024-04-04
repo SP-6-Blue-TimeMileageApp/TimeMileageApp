@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
-import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform , Image} from 'react-native';
+import { TextInput, StyleSheet, Text, View, Button, KeyboardAvoidingView, Platform , Image, TouchableOpacity} from 'react-native';
 import * as Location from 'expo-location';
 import { firebaseLogin, firebaseCurrentUser, firebaseGetPremiumStatus, firebasePushTrip } from '../../firebaseConfig';
 import testImage from "../../assets/bannerAd.jpg";
@@ -93,6 +93,8 @@ export default function App() {
 
         // Show directions button
         setShowDirectionsButton(true);
+        setShowGoButton(false);
+        setShowStopButton(false);
         setErrorMsg(null);
       } else {
         setSearchedLocation(null);
@@ -119,6 +121,7 @@ export default function App() {
         const decodedPolyline = decodePolyline(polyline); // Decodes polyline points
         setDirections(decodedPolyline); // Sets variable based on decoded polyline points
         setShowGoButton(true); // Makes the "GO" button visible
+        setShowDirectionsButton(false); // Hides the "Get Directions" button
       }
     } catch (error) {
       console.error('Error getting directions:', error);
@@ -201,11 +204,33 @@ export default function App() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
+
+      setMapRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      });
+
       setShowStopButton(false);
+      setDistanceInfo(null);
+      setSearchQuery('');
+      setDirections([]);
+      setSearchedLocation(null);
+      
     } catch (error) {
       console.error('Error stopping trip:', error);
     }
   };
+
+  const clearScreen = () => {
+    setDistanceInfo(null);
+    setSearchQuery('');
+    setDirections([]);
+    setSearchedLocation(null);
+    setShowGoButton(false);
+    setShowStopButton(false);
+  }
 
   //Fetches address given input coordinates using google geocoding api
   const getAddressFromCoordinates = async(lat, long) => {
@@ -288,7 +313,7 @@ export default function App() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 45 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
 
         {/* {!premiumStatus && (
@@ -317,27 +342,56 @@ export default function App() {
           />
         )}
       </MapView>
-      <TextInput
-        style={styles.input}
-        placeholder="Search..."
-        onChangeText={(text) => setSearchQuery(text)}
-      />
-      <Button title="Search" onPress={TextSearch} />
-      {showDirectionsButton && (
-      <Button title="Get Directions" onPress={getDirections} />
-      )}
-      {showGoButton && (
-        <Button title="GO" onPress={startTrip} color="green" />
-      )}
-      {showStopButton && (
-        <Button title="STOP" onPress={stopTrip} color="red" />
-      )}
-      {distanceInfo && (
-        <Text style={styles.distanceInfo}>
-          Distance: {distanceInfo.distance}, Duration: {distanceInfo.duration}
-        </Text>
-      )}
-      {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
+      <View style={{flexDirection: "row", justifyContent: "flex-end", marginTop: 5, marginLeft: 5, marginRight: 5}}>
+
+        <View style={{flex: 1, height: 40, borderRadius:10}}>
+          <TextInput
+          style={[styles.input, {borderRadius:10}]}
+          placeholder="Search..."
+          onChangeText={(text) => setSearchQuery(text)}
+          value={searchQuery}
+          />
+
+          {searchQuery ? (
+            <TouchableOpacity 
+                style={{ position: 'absolute', right: 10, height:40, justifyContent: "center" }} 
+                onPress={clearScreen}
+            >
+                <Text>X</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        
+        <TouchableOpacity title="Search" onPress={TextSearch} style={{justifyContent: "center", padding: 10, marginLeft: 10, borderRadius: 10, height:40, backgroundColor: "#D3D3D3"}}>
+          <Text>Search</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{flexDirection: "row", justifyContent: "flex-start", margin:5}}>
+        {showDirectionsButton && (
+          <TouchableOpacity onPress={getDirections} style={{justifyContent: "center", padding: 10, marginRight: 10, borderRadius: 10, height:40, backgroundColor: "#D3D3D3"}}>
+            <Text>Get Directions</Text>
+          </TouchableOpacity>
+        )}
+        {showGoButton && (
+          <TouchableOpacity onPress={startTrip} style={{justifyContent: "center", padding: 10, marginRight: 10, borderRadius: 10, height:40, backgroundColor: "#50C878"}}>
+            <Text>GO</Text>
+          </TouchableOpacity>
+        )}
+        {showStopButton && (
+          <TouchableOpacity onPress={stopTrip} style={{justifyContent: "center", padding: 10, marginRight: 10, borderRadius: 10, height:40, backgroundColor: "#FF3131"}}>
+            <Text>STOP</Text>
+          </TouchableOpacity>
+        )}
+        {distanceInfo && (
+          <Text style={styles.distanceInfo}>
+            Distance: {distanceInfo.distance}, Duration: {distanceInfo.duration}
+          </Text>
+        )}
+        {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
+      </View>
+      
+      
     </KeyboardAvoidingView>
   );
 }
@@ -362,6 +416,7 @@ const styles = StyleSheet.create({
   },
   distanceInfo: {
     marginTop: 10,
+    justifyContent: 'center',
   },
   bannerAd: {
     height: 50,
