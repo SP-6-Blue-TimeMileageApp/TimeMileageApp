@@ -28,23 +28,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase();
 
-export function firebaseGetDatabase() {
+export function firebaseGetDatabase(callback) {
     const db = getDatabase();
     const userEmail = auth.currentUser.email.split('@')[0];
     const userEmailSanitized = userEmail.replace(/\./g, ',');
     const tripRef = ref(db, `trips/${userEmailSanitized}`);
 
-    return new Promise((resolve, reject) => {
-        onValue(tripRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                resolve(data);
-                // console.log(data);
-            } else {
-                reject("No data found");
-            }
-        });
-    })
+    const historyWatch = onValue(tripRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            callback(data);
+        } else {
+            callback(null);
+        }
+    });
+
+    return () => {
+        off(tripRef, historyWatch);
+    };
 };
 
 export function firebasePushTrip(startTime, endTime, startLocation, endLocation, distance) {

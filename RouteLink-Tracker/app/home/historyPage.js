@@ -9,35 +9,41 @@ import testImage from "../../assets/bannerAd.jpg";
 
 
 
-const handleExport= async () => {
-    console.log('Exporting data to device');
-    const trips = await firebaseGetDatabase();
-
-    console.log(trips);
-
-    // Convert the data to the format that `XLSX.utils.aoa_to_sheet` expects
-    const data = Object.keys(trips).map(key => [key, trips[key].distance, trips[key].trip]);
-
-    console.log(data);
-
-    // Create a new workbook and worksheet
-    let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.aoa_to_sheet([['Trip ID', 'Distance', 'Trip'], ...data]);
-
-    // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, 'Trips', true);
-
-    // Write the workbook to a file
-    const base64 = XLSX.write(wb, {type:'base64', bookType:"xlsx"});
-    const filename = FileSystem.documentDirectory + 'trips.xlsx';
-    await FileSystem.writeAsStringAsync(filename, base64, { encoding: FileSystem.EncodingType.Base64 })
-    .then(() => {
-        Sharing.shareAsync(filename)
-    });
-
-}
-
 const History = () => {
+
+    const handleExport= async () => {
+        console.log('Exporting data to device');
+        const currentTrips = trips;
+    
+        console.log(trips);
+    
+        // Convert the data to the format that `XLSX.utils.aoa_to_sheet` expects
+        const data = Object.keys(trips).map(key => [
+            currentTrips[key].startTime, 
+            currentTrips[key].endTime, 
+            parseFloat(currentTrips[key].distance).toFixed(5) + ' miles', 
+            currentTrips[key].startLocation,
+            currentTrips[key].endLocation
+        ]);
+    
+        console.log(data);
+    
+        // Create a new workbook and worksheet
+        let wb = XLSX.utils.book_new();
+        let ws = XLSX.utils.aoa_to_sheet([['Start Time', 'End Time', 'Distance', 'Start Location', 'End Location'], ...data]);
+    
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Trips', true);
+    
+        // Write the workbook to a file
+        const base64 = XLSX.write(wb, {type:'base64', bookType:"xlsx"});
+        const filename = FileSystem.documentDirectory + 'trips.xlsx';
+        await FileSystem.writeAsStringAsync(filename, base64, { encoding: FileSystem.EncodingType.Base64 })
+        .then(() => {
+            Sharing.shareAsync(filename)
+        });
+    
+    }
 
     const [refreshing, setRefreshing] = useState(false);
 
@@ -57,14 +63,24 @@ const History = () => {
     const [premiumStatus, setPremiumStatus] = useState(null);
 
     useEffect(() => {
-        firebaseGetDatabase().then(data => setTrips(data)).catch(error => console.log(error));
+        const watchHistory = firebaseGetDatabase((fetchedTrips) => {
+            setTrips(fetchedTrips);
+        })
+
         firebaseGetPremiumStatus().then(status => setPremiumStatus(status)).catch(error => console.log(error));
         console.log(premiumStatus);
 
+        return () => watchHistory
+
     }, []);
 
-    const header = ['Start Date', 'Distance', 'End Location'];
-    const data = Object.keys(trips).map(key => [key, trips[key].distance, trips[key].trip]);
+    const header = ['Date', 'Distance', 'End Location'];
+    const data = Object.keys(trips).sort().slice(-6).reverse()
+    .map(key => [
+        trips[key].startTime, 
+        parseFloat(trips[key].distance).toFixed(5) + ' miles', 
+        trips[key].endLocation
+    ]);
       
     return(
 
@@ -84,8 +100,8 @@ const History = () => {
 
             <View style={{flex: 1, padding: 20}}>
                 <Table borderStyle={{borderWidth: 2}}>
-                    <Row data={header} textStyle={{color: "black"}}  />
-                    <Rows data={data} textStyle={{color: "black"}} />
+                    <Row data={header}/>
+                    <Rows data={data} />
                 </Table>
             </View>
             

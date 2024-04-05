@@ -43,7 +43,9 @@ const Settings = () => {
     const [premiumStatus, setPremiumStatus] = useState();
     const [username, setUsername] = useState(firebaseGetDisplayName()) //this is the username
     const [password, setPassword] = useState('') //this is the password
+    const [confirmPassword, setConfirmPassword] = useState('') //this is the confirm password
     const [email, setEmail] = useState(firebaseGetEmailName()) //this is the email
+    const [errorMessages, setErrorMessage] = useState('')
             
     const setUserName = (text) => {
         setUsername(text)
@@ -57,6 +59,10 @@ const Settings = () => {
         setPassword(text)
     }
 
+    const setUserConfirmPassword = (text) => {
+        setConfirmPassword(text)
+    }
+
     const [modalType, setModalType] = useState(null);
     
 
@@ -66,6 +72,15 @@ const Settings = () => {
     }
 
     const handleChangePassword = () => {
+
+      if(password.length < 6 || confirmPassword.length < 6) {
+        setErrorMessage("Password must be at least 6 characters long")
+        return;
+      }else if (password !== confirmPassword) {
+        setErrorMessage("Passwords do not match")
+        return;
+      }
+
       setModalType(null);
       firebaseSetPassword(password)
     }
@@ -73,6 +88,12 @@ const Settings = () => {
     const handleChangeUsername = () => {
         setModalType(null);
         firebaseSetDisplayName(username)
+    }
+
+    const handleCancel = () => {
+        setModalType(null);
+        setConfirmPassword('')
+        setPassword('')
     }
 
 
@@ -251,15 +272,21 @@ const Settings = () => {
                     )}
                 
                     {modalType === 'email' ? (
-                        <TextInput style={styles.modalInput} onChangeText={setUserEmail} value={email} placeholder="New email"/>
+                        <TextInput style={styles.modalInput} onChangeText={setUserEmail} value={email} placeholder="New email" placeholderTextColor={"grey"}/>
                     ) : modalType === 'password' ? (
-                        <TextInput style={styles.modalInput} onChangeText={setUserPassword} value={password} placeholder="New password"/>
+                      <>
+                        {errorMessages ? <Text style={{color: 'red', textAlign: 'center'}}>{errorMessages}</Text> : null}
+
+                        <TextInput style={styles.modalInput} onChangeText={setUserPassword} value={password} placeholder="New password" placeholderTextColor={"grey"}/>
+                        
+                        <TextInput style={styles.modalInput} onChangeText={setUserConfirmPassword} value={confirmPassword} placeholder="Confirm New password" placeholderTextColor={"grey"}/>
+                      </>
                     ) : (
-                        <TextInput style={styles.modalInput} onChangeText={setUserName} value={username} placeholder="New username"/>
+                        <TextInput style={styles.modalInput} onChangeText={setUserName} value={username} placeholder="New username" placeholderTextColor={"grey"}/>
                     )}
 
                     <View style={{flexDirection: 'row'}}>
-                        <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={() => setModalType(null)}>
+                        <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={handleCancel}>
                             <Text style={styles.textStyle}>Cancel</Text>
                         </TouchableOpacity>
 
