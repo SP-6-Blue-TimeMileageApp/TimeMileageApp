@@ -19,6 +19,7 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchedLocation, setSearchedLocation] = useState(null);
+  const [locationDetails, setLocationDetails] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [directions, setDirections] = useState([]);
   const [distanceInfo, setDistanceInfo] = useState(null);
@@ -63,7 +64,7 @@ export default function App() {
       console.log('Search Query:', searchQuery);
       // Calls Places API to find the location
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${APIKey}`
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&fields=name,geometry,photos,opening_hours,rating&key=${APIKey}`
       );
       // Parses response as JSON and prints it in log
       const data = await response.json();
@@ -72,7 +73,7 @@ export default function App() {
       // Processes search result
       if (data.results && data.results.length > 0) {
         const firstResult = data.results[0];
-        const { geometry, name } = firstResult;
+        const { geometry, name, photos, opening_hours, rating } = firstResult;
         const { location } = geometry;
   
         setSearchedLocation({
@@ -81,6 +82,12 @@ export default function App() {
             latitude: location.lat,
             longitude: location.lng,
           },
+        });
+        setLocationDetails({
+          name: name || 'Searched Location',
+          photo: photos && photos.length > 0 ? photos[0].photo_reference : null,
+          isOpen: opening_hours ? opening_hours.open_now : null,
+          rating: rating || null,
         });
 
         // Adjusts map over searched location
@@ -105,6 +112,46 @@ export default function App() {
       setSearchedLocation(null);
       setErrorMsg('Error with text search');
     }
+  };
+  // Displays photo, name, rating, and open status after searching for a location
+  const LocationDetails = ({ details, onClose }) => {
+    if (!details) return null;
+  
+    const { photo, isOpen, rating, name } = details;
+  
+    return (
+      <View style={styles.locationDetails}>
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <View style={styles.closeButtonBackground}>
+            <Text style={styles.closeButtonText}>x</Text>
+          </View>
+        </TouchableOpacity>
+        {photo && (
+          <Image
+            style={styles.locationPhoto}
+            source={{
+              uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo}&key=${APIKey}`,
+            }}
+          />
+        )}
+        <View style={styles.locationInfo}>
+          <Text style={styles.locationName}>{name}</Text>
+          {isOpen !== null && (
+            <Text
+              style={[
+                styles.locationStatus,
+                isOpen ? styles.openStatus : styles.closedStatus,
+              ]}
+            >
+              {isOpen ? 'Open' : 'Closed'}
+            </Text>
+          )}
+          {rating !== null && (
+            <Text style={styles.locationRating}>Rating: {rating}</Text>
+          )}
+        </View>
+      </View>
+    );
   };
   // Gets direction from user's current location to searched location. Can set this to repeat more often to adjust the route as the user drives, but requires calling the API everytime.
   const getDirections = async () => {
@@ -315,6 +362,10 @@ export default function App() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
+      <LocationDetails
+        details={locationDetails}
+        onClose={() => setLocationDetails(null)}
+      />
 
         {/* {!premiumStatus && (
                 <View style={styles.bannerAd}>
@@ -427,5 +478,67 @@ const styles = StyleSheet.create({
   adImage: {
       width: '100%',
       height: '100%',
+  },
+  locationDetails: {
+    flexDirection: 'row',
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  locationPhoto: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  locationInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  locationName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  locationStatus: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderRadius: 5,
+    marginBottom: 5,
+    alignSelf: 'flex-start',
+  },
+  openStatus: {
+    backgroundColor: 'green',
+    color: 'white',
+  },
+  closedStatus: {
+    backgroundColor: 'red',
+    color: 'white',
+  },
+  locationRating: {
+    fontSize: 16,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  closeButtonBackground: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
