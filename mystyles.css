@@ -19,7 +19,6 @@ header {
   background-color: #231F20;
   color: #ffffff;
   font-family: Arial, helvetica;;
-  padding: 20px;
 }
 
 h1 { 
@@ -79,7 +78,6 @@ figure {
   position: relative;
   display: flex;
   justify-content: center;
-  height: 150px;
 }
 
 figcaption{
