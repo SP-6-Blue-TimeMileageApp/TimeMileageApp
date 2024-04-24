@@ -71,7 +71,7 @@ dt {
 
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: nowrap;
 }
 
@@ -91,8 +91,8 @@ figcaption{
 }
 
 img{
-  max-width: 100px; /* Adjust as needed */
-  max-height: 100px; /* Adjust as needed */
+  max-width: 100px;
+  max-height: 100px;
   object-fit: cover;
   display: block;
 }
