@@ -58,7 +58,6 @@ nav a:hover { color: #FFFFFF; }
 nav ul { list-style-type: none;
      margin: 0;
      padding-left: 0;
-     overflow-wrap: normal;
 }
 h2 { 
   text-align: center;
@@ -72,8 +71,9 @@ dt {
 
 .container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: nowrap;
+  margin: 15px;
 }
 
 figure {
