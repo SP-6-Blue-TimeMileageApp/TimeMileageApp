@@ -91,8 +91,8 @@ figcaption{
 }
 
 img{
-  max-width: 80px; /* Adjust as needed */
-  max-height: 80px; /* Adjust as needed */
+  max-width: 100px; /* Adjust as needed */
+  max-height: 100px; /* Adjust as needed */
   object-fit: cover;
   display: block;
 }
