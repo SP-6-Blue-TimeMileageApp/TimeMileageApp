@@ -91,8 +91,7 @@ figcaption{
 }
 
 img{
-  max-width: 100px;
-  max-height: 100px;
+  width: 80%;
   object-fit: cover;
   display: block;
 }
